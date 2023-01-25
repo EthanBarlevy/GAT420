@@ -24,7 +24,7 @@ std::vector<char_node_t*> getDFS(char_node_t* root, char target)
 	root->visited = true;
 	node_stack.push(root);
 	
-	while (node_stack.size())
+	while (!node_stack.empty())
 	{
 		// get current node
 		char_node_t* current = node_stack.top();
