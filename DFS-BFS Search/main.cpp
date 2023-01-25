@@ -118,9 +118,11 @@ std::vector<char_node_t*> getBFS(char_node_t* root, char target)
 	while (node)
 	{
 		// add node then set node to parent
-		path.insert(path.begin(), node_queue.front());
+		path.insert(path.begin(), node);
 		node = node->parent;
 	}
+
+	return path;
 }
 
 int main()
