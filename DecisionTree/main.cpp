@@ -8,7 +8,7 @@ public:
 	Node(const string& description) : description{ description } 
 	{}
 
-	virtual Node* Execute();
+	virtual Node* Execute() = 0;
 
 protected:
 	string description;
@@ -19,7 +19,7 @@ class DecisionNode : public Node
 public:
 	DecisionNode(const string& description) : Node(description) {}
 
-	virtual bool IsTrue();
+	virtual bool IsTrue() = 0;
 
 	Node* Execute() override
 	{
@@ -31,8 +31,8 @@ public:
 		return (isTrue) ? trueNode : falseNode;;
 	}
 public:
-	Node* trueNode;
-	Node* falseNode;
+	Node* trueNode = nullptr;
+	Node* falseNode = nullptr;
 };
 
 class DecisionBoolNode : public DecisionNode
@@ -115,5 +115,33 @@ void Transverse(Node* node)
 
 int main()
 {
-	DecisionFloatNode* 
+	DecisionFloatNode* Health = new DecisionFloatNode("is health lower than 20", 20, DecisionFloatNode::Predicate::LESS);
+	DecisionBoolNode* PlayerSeen = new DecisionBoolNode("is player seen", true);
+	DecisionFloatNode* Healthpack = new DecisionFloatNode("is healthpack closer than 10m", 10, DecisionFloatNode::Predicate::LESS);
+	DecisionFloatNode* PlayerDistance = new DecisionFloatNode("is player closer than 10m", 10, DecisionFloatNode::Predicate::LESS);
+
+	ActionNode* Patrol = new ActionNode("patrol");
+	ActionNode* MoveToPlayer = new ActionNode("move towards player");
+	ActionNode* Attack = new ActionNode("attack");
+	ActionNode* SearchForHP = new ActionNode("search for healthpack");
+	ActionNode* Heal = new ActionNode("heal up");
+
+	Health->trueNode = Healthpack;
+	Health->falseNode = PlayerSeen;
+
+	Healthpack->trueNode = Heal;
+	Healthpack->falseNode = SearchForHP;
+
+	PlayerSeen->trueNode = PlayerDistance;
+	PlayerSeen->falseNode = Patrol;
+
+	PlayerDistance->trueNode = Attack;
+	PlayerDistance->falseNode = MoveToPlayer;
+
+	Health->value = 55;
+	Healthpack->value = 20;
+	PlayerSeen->value = true;
+	PlayerDistance->value = 5;
+
+	Transverse(Health);
 }
